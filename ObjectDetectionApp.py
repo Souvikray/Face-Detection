@@ -4,8 +4,8 @@ from skimage.measure import compare_ssim
 from twilio.rest import Client
 
 #Find these values at https://twilio.com/user/account
-account_sid = "AC598fdd1a56846658****************"
-auth_token = "ce2337ed21d39036****************"
+account_sid = "AC598fdd1a56846*******************"
+auth_token = "ce2337ed21d39*******************"
 #create a Client object containing your twilio credentials
 client = Client(account_sid, auth_token)
 
