@@ -1,6 +1,13 @@
 import cv2
 import numpy as np
 from skimage.measure import compare_ssim
+from twilio.rest import Client
+
+#Find these values at https://twilio.com/user/account
+account_sid = "AC598fdd1a56846658****************"
+auth_token = "ce2337ed21d39036****************"
+#create a Client object containing your twilio credentials
+client = Client(account_sid, auth_token)
 
 #we can compare two images using Structural Similarity
 #so a small change in pixel value won't prompt this method to term both images as dissimilar
@@ -20,7 +27,10 @@ cap = cv2.VideoCapture("Sample Video.webm")
 first_frame = True
 prev_frame = None
 current_frame = None
+#we keep a count of the frames
 frame_counter = 0
+#this will check if the message is sent and then become false to avoid sending messages continuosly
+message_sent = True
 while True:
     if frame_counter == 0:
         #prev_frame will always trail behind the current_frame
@@ -46,8 +56,15 @@ while True:
     #this also ensures that the SSIM calculation is not too slow
     if frame_counter == 9:
         #compare two images based on SSIM
-        print(ssim(current_frame, prev_frame))
-
+        ssim_val = ssim(current_frame, prev_frame)
+        print(ssim_val)
+        #if there is a major drop in the SSIM value ie it has detected an object
+        if ssim_val < 0.8 and message_sent:
+            client.api.account.messages.create(to="+9198********",
+                                               from_="+165********",
+                                               body="Something is moving!")
+            #to ensure you don't send messages continuosly
+            message_sent = False
         #compare two images based on MSM
         #print(mse(current_frame, prev_frame))
 
